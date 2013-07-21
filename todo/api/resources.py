@@ -24,6 +24,7 @@ class UserResource(ModelResource):
 
 class UserTodoResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
+	todo_lower = fields.CharField()
 	class Meta:
 		queryset = UserTodo.objects.all()
 		ordering=['todo'] # Specify the field names on which ordering is allowed
@@ -62,3 +63,8 @@ class UserTodoResource(ModelResource):
 			)
 			base_object_list = base_object_list.filter(qset).distinct()
 		return base_object_list.filter(**filters).distinct()
+	def dehydrate_todo(self, bundle):
+		return bundle.data['todo'].upper()
+	def dehydrate(self, bundle):
+		bundle.data['todo_lower'] = bundle.data['todo'].lower()
+		return bundle
