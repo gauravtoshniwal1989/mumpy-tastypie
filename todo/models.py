@@ -15,3 +15,8 @@ class UserTodo(models.Model):
     user = models.ForeignKey(User)
     def __unicode__(self):
     	return "%s" % self.todo
+
+# Create your views here.
+from tastypie.models import create_api_key
+
+models.signals.post_save.connect(create_api_key, sender=User)
