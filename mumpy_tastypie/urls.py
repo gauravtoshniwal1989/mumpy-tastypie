@@ -8,8 +8,10 @@ from tastypie.api import Api
 
 api = Api(api_name='v1')
 
-from todo.api.resources import TodoResource
+from todo.api.resources import TodoResource,UserResource,UserTodoResource
 api.register(TodoResource())
+api.register(UserResource())
+api.register(UserTodoResource())
 
 urlpatterns = patterns('',
     # Examples:
