@@ -8,6 +8,7 @@ from tastypie.authentication import Authentication, BasicAuthentication, ApiKeyA
 from todo.models import Todo, UserTodo
 from django.contrib.auth.models import User
 from todo.api.auth import CustomAuthentication, UserObjectsOnlyAuthorization
+from django.db.models import Q
 class TodoResource(ModelResource):
 	class Meta:
 		queryset = Todo.objects.all()
@@ -44,3 +45,20 @@ class UserTodoResource(ModelResource):
 
 		# authorization = Authorization()
 		authorization = UserObjectsOnlyAuthorization()
+
+	def apply_filters(self, request, applicable_filters):
+		base_object_list = super(UserTodoResource, self).apply_filters(request, applicable_filters)
+		query = request.GET.get('query', None)
+		ids = request.GET.get('ids', None)
+		filters = {}
+		# if ids:
+		# 	ids = ids.replace('+', ' ').split(' ')
+		# 	filters.update(dict(id__in=ids))
+		if query:
+			qset = (
+				Q(todo__icontains=query, **filters)
+				# |
+				# Q(description__icontains=query, **filters)
+			)
+			base_object_list = base_object_list.filter(qset).distinct()
+		return base_object_list.filter(**filters).distinct()
