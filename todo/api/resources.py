@@ -7,8 +7,7 @@ from tastypie.authentication import Authentication, BasicAuthentication, ApiKeyA
 
 from todo.models import Todo, UserTodo
 from django.contrib.auth.models import User
-from todo.api.auth import CustomAuthentication
-
+from todo.api.auth import CustomAuthentication, UserObjectsOnlyAuthorization
 class TodoResource(ModelResource):
 	class Meta:
 		queryset = Todo.objects.all()
@@ -37,8 +36,11 @@ class UserTodoResource(ModelResource):
 			'user':ALL_WITH_RELATIONS
 		}
 		serializer = Serializer(formats=['json'])
-		authorization = Authorization()
+		
 		# authentication = BasicAuthentication()
 		# authentication = SessionAuthentication()
 		# authentication = ApiKeyAuthentication()
-		authentication = CustomAuthentication()
+		# authentication = CustomAuthentication()
+
+		# authorization = Authorization()
+		authorization = UserObjectsOnlyAuthorization()
